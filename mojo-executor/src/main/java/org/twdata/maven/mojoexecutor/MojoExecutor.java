@@ -268,6 +268,30 @@ public class MojoExecutor {
     }
 
     /**
+     * Constructs the element with a textual body and attributes
+     *
+     * @param name       The element name
+     * @param value      The element text value
+     * @param attributes The element attributes
+     * @return The element object
+     */
+    public static Element element(String name, String value, Attributes attributes) {
+        return new Element(name, value, attributes);
+    }
+
+    /**
+     * Constructs the element with a textual body and only attribute
+     *
+     * @param name       The element name
+     * @param value      The element text value
+     * @param attribute  The element attribute
+     * @return The element object
+     */
+    public static Element element(String name, String value, Attribute attribute) {
+        return new Element(name, value, new Attributes(attribute));
+    }
+
+    /**
      * Constructs the element containing child elements
      *
      * @param name     The element name
@@ -279,6 +303,51 @@ public class MojoExecutor {
     }
 
     /**
+     * Constructs the element containing child elements and attributes
+     *
+     * @param name       The element name
+     * @param attributes The element attributes
+     * @param elements   The child elements
+     * @return The Element object
+     */
+    public static Element element(String name, Attributes attributes, Element... elements) {
+        return new Element(name, attributes, elements);
+    }
+
+    /**
+     * Constructs the element containing child elements and only attribute
+     *
+     * @param name       The element name
+     * @param attribute  The element attribute
+     * @param elements   The child elements
+     * @return The Element object
+     */
+    public static Element element(String name, Attribute attribute, Element... elements) {
+        return new Element(name, new Attributes(attribute), elements);
+    }
+
+    /**
+     * Constructs the attributes wrapper
+     *
+     * @param attributes The attributes
+     * @return The Attributes object
+     */
+    public static Attributes attributes(Attribute ... attributes) {
+        return new Attributes(attributes);
+    }
+
+    /**
+     * Constructs the attribute
+     *
+     * @param name  The attribute name
+     * @param value The attribute value
+     * @return The Attribute object
+     */
+    public static Attribute attribute(String name, String value) {
+        return new Attribute(name, value);
+    }
+
+    /**
      * Element wrapper class for configuration elements
      */
     public static class Element {
@@ -286,21 +355,37 @@ public class MojoExecutor {
         private final Map<String, String> attributes;
         private final String name;
         private final String text;
+        private final Attributes attributes;
 
         public Element(String name, Element... children) {
-            this(name, null, children);
+            this(name, null, new Attributes(), children);
+        }
+
+        public Element(String name, Attributes attributes, Element... children) {
+            this(name, null, attributes, children);
         }
 
         public Element(String name, String text, Element... children) {
             this.name = name;
             this.text = text;
             this.children = children;
+<<<<<<< HEAD
             this.attributes = new HashMap<String, String>();
         }
 
         public Element attribute(String key, String value) {
             attributes.put(key, value);
             return this;
+=======
+            this.attributes = new Attributes();
+        }
+
+        public Element(String name, String text, Attributes attributes, Element... children) {
+            this.name = name;
+            this.text = text;
+            this.children = children;
+            this.attributes = attributes;
+>>>>>>> 7cc3e23e5f138f841c2948a6b6a62ca549e87972
         }
 
         public Xpp3Dom toDom() {
@@ -311,10 +396,41 @@ public class MojoExecutor {
             for (Element e : children) {
                 dom.addChild(e.toDom());
             }
+<<<<<<< HEAD
             for (Map.Entry<String, String> entry : attributes.entrySet()) {
                 dom.setAttribute(entry.getKey(), entry.getValue());
             }
+=======
+            for(Attribute attribute : attributes.attributes) {
+                dom.setAttribute(attribute.name, attribute.value);
+            }
+
+>>>>>>> 7cc3e23e5f138f841c2948a6b6a62ca549e87972
             return dom;
+        }
+    }
+
+    /**
+     * Collection of attributes wrapper class
+     */
+    public static class Attributes {
+        private List<Attribute> attributes;
+
+        public Attributes(Attribute ... attributes) {
+            this.attributes = Arrays.asList(attributes);
+        }
+    }
+
+    /**
+     * Attribute wrapper class
+     */
+    public static class Attribute {
+        private final String name;
+        private final String value;
+
+        public Attribute(String name, String value) {
+            this.name = name;
+            this.value = value;
         }
     }
 
